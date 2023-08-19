@@ -1,0 +1,17 @@
+# EditorConfig is awesome: https://EditorConfig.org
+#EditorConfig file helps maintain a consistent codebase across different editors and IDEs used by developers working on the project.
+root = true
+
+[*]
+end_of_line = lf
+insert_final_newline = true
+charset = utf-8
+indent_size = 2
+trim_trailing_whitespace = true
+
+[*.{ts,js}]
+quote_type = single
+
+[*.md]
+max_line_length = off
+trim_trailing_whitespace = false
