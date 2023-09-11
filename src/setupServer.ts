@@ -1,4 +1,3 @@
-import { CustomError, IErrorResponse } from './shared/globals/helpers/error-handler';
 import {Application, json, urlencoded, Response, Request, NextFunction, } from 'express';
 import http from 'http';
 import cors from 'cors';
@@ -14,9 +13,10 @@ import { createAdapter } from '@socket.io/redis-adapter';
 import Logger from 'bunyan';
 
 import 'express-async-errors';
-import { config } from './config';
+import { config } from '@root/config';
 
-import applicationRoutes from './routes';
+import applicationRoutes from '@root/routes';
+import { CustomError, IErrorResponse } from '@global/helpers/error-handler';
 
 
 
@@ -72,7 +72,7 @@ export class chatServer {
         app.use(compression());
 
         // Apply JSON body parsing middleware with a specified limit
-        app.use(json({ limit: 50 }));
+        app.use(json({ limit: 5000 }));
 
         // Apply URL-encoded body parsing middleware with a specified limit and extended mode
         app.use(urlencoded({ extended: true, limit: 50 }));
@@ -146,6 +146,6 @@ export class chatServer {
         });
     }
     private socketIOconnections (io:Server): void{
-
+      log.info("socketIOconnections")
     }
 }
