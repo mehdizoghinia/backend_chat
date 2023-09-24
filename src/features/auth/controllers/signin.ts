@@ -8,8 +8,15 @@ import { authService } from '@services/db/auth.service';
 import { BadRequestError } from '@global/helpers/error-handler';
 import { loginSchema } from '@auth/schemes/signin';
 import { IAuthDocument } from '@auth/interfaces/auth.interface';
-import { IUserDocument } from "@user/interfaces/user.interface";
+import { IResetPasswordParams, IUserDocument } from "@user/interfaces/user.interface";
 import { userService } from "@services/db/user.service";
+import { mailTransport } from "@services/emails/mail.transport";
+import { forgotPasswordTemplate } from "@services/emails/templates/forgot-password/forgot-pw-templ";
+import { emailQueue } from "@services/queues/email.queue";
+
+import moment from "moment";
+import publicIP from 'ip';
+import { resetPasswordTemplate } from "@services/emails/templates/reset-password/reset-pw-templ";
 
 // Define a class called SignIn
 export class SignIn {
@@ -63,6 +70,22 @@ export class SignIn {
     // Set the JWT token in the session
     req.session = { jwt: userJWT };
 
+    // await mailTransport.sendEmail('enola.bosco@ethereal.email',"this is subject", 'this is body');
+
+    ///test reset-password
+    // const resetLink = `${config.CLIENT_URL}/reset-password?token=1234234`;
+    // const template : string = forgotPasswordTemplate.passwordResetTemplate(existingUser.username!, resetLink);
+    // emailQueue.addEmailJob('forgotPasswordEmail', {template, receiverEmail:'enola.bosco@ethereal.email',subject:'Please reset your password'});
+
+    ///test confirmation
+    // const templateParams: IResetPasswordParams = {
+    //   username: existingUser.username!,
+    //   email: existingUser.email!,
+    //   ipaddress: publicIP.address(),
+    //   date: moment().format('DD/MM/YYYY HH:mm')
+    // }
+    // const template: string = resetPasswordTemplate.passwordResetConfirmationTemplate(templateParams);
+    // emailQueue.addEmailJob('forgotPasswordEmail', {template, receiverEmail:'enola.bosco@ethereal.email',subject:'password reset confirmation'} );
     // Send a JSON response indicating successful user login along with user information and the JWT token
     res.status(HTTP_STATUS.OK).json({ message: 'User logged in', user: userDocument, token: userJWT });
   }
