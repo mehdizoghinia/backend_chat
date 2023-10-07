@@ -15,7 +15,6 @@ class AuthRoutes {
 
   // Setup authentication routes
   public routes(): Router {
-    console.log("hiiiii231wrwerwwt41")
     // Attach the create method from the SignUp class to the POST /signup route
     this.router.post('/signup', SignUp.prototype.create);
     this.router.post('/signin', SignIn.prototype.read);

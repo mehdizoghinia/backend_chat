@@ -29,7 +29,7 @@
       "@auth/*" : ["src/features/auth/*"],
       "@global/*" : ["src/shared/globals/*"],
       "@services/*" : ["src/shared/services/*"],
-      "@sockets/*" : ["src/shared/sockets/*"],
+      "@socket/*" : ["src/shared/sockets/*"],
       "@workers/*" : ["src/shared/workers/*"],
       "@mocks/*" : ["src/mocks/*"],
       "@root/*" : ["src/*"] }

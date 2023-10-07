@@ -73,7 +73,7 @@
     "moment": "^2.29.4",
     "mongoose": "^7.4.3",
     "nodemailer": "^6.9.5",
-    "redis": "^4.6.7",
+    "redis": "^4.6.10",
     "redis-commander": "^0.8.0",
     "socket.io": "^4.7.2",
     "socket.io-redis": "^6.1.1",

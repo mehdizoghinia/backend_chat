@@ -17,6 +17,7 @@ import { config } from '@root/config';
 
 import applicationRoutes from '@root/routes';
 import { CustomError, IErrorResponse } from '@global/helpers/error-handler';
+import { SocketIOPostHandler } from '@socket/post';
 
 
 
@@ -147,5 +148,6 @@ export class chatServer {
     }
     private socketIOconnections (io:Server): void{
       log.info("socketIOconnections")
+      const postSocketHandler: SocketIOPostHandler = new SocketIOPostHandler(io);
     }
 }

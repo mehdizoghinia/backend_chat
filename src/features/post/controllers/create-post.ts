@@ -9,6 +9,8 @@ import { PostCache } from '@services/redis/post.cache';
 import { UploadApiResponse } from 'cloudinary';
 import { uploads } from '@global/helpers/cloudinary-upload';
 import { BadRequestError } from '@global/helpers/error-handler';
+import { socketIOPostObject } from '@socket/post';
+import { postQueue } from '@services/queues/post.queue';
 
 const postCache: PostCache = new PostCache();
 
@@ -38,62 +40,64 @@ export class Create {
       createdAt: new Date(),
       reactions: { like: 0, love: 0, happy: 0, sad: 0, wow: 0, angry: 0 }
     } as IPostDocument;
-    // socketIOPostObject.emit('add post', createdPost);
+    // console.log('socketIOPostObject',socketIOPostObject)
+    socketIOPostObject.emit('add post', createdPost);
     await postCache.savePostToCache({
       key: postObjectId,
       currentUserId: `${req.currentUser!.userId}`,
       uId: `${req.currentUser!.uId}`,
       createdPost
     });
-    // postQueue.addPostJob('addPostToDB', { key: req.currentUser!.userId, value: createdPost });
+    postQueue.addPostJob('addPostToDB', { key: req.currentUser!.userId, value: createdPost });
     res.status(HTTP_STATUS.CREATED).json({ message: 'Post created successfully' });
   }
 
-  // @joiValidation(postWithImageSchema)
-  // public async postWithImage(req: Request, res: Response): Promise<void> {
-  //   const { post, bgColor, privacy, gifUrl, profilePicture, feelings, image } = req.body;
+  @joiValidation(postWithImageSchema)
+  public async postWithImage(req: Request, res: Response): Promise<void> {
+    const { post, bgColor, privacy, gifUrl, profilePicture, feelings, image } = req.body;
 
-  //   const result: UploadApiResponse = (await uploads(image)) as UploadApiResponse;
-  //   if (!result?.public_id) {
-  //     throw new BadRequestError(result.message);
-  //   }
+    const result: UploadApiResponse = (await uploads(image)) as UploadApiResponse;
+    if (!result?.public_id) {
+      throw new BadRequestError(result.message);
+    }
 
-  //   const postObjectId: ObjectId = new ObjectId();
-  //   const createdPost: IPostDocument = {
-  //     _id: postObjectId,
-  //     userId: req.currentUser!.userId,
-  //     username: req.currentUser!.username,
-  //     email: req.currentUser!.email,
-  //     avatarColor: req.currentUser!.avatarColor,
-  //     profilePicture,
-  //     post,
-  //     bgColor,
-  //     feelings,
-  //     privacy,
-  //     gifUrl,
-  //     commentsCount: 0,
-  //     imgVersion: result.version.toString(),
-  //     imgId: result.public_id,
-  //     videoId: '',
-  //     videoVersion: '',
-  //     createdAt: new Date(),
-  //     reactions: { like: 0, love: 0, happy: 0, sad: 0, wow: 0, angry: 0 }
-  //   } as IPostDocument;
-  //   socketIOPostObject.emit('add post', createdPost);
-  //   await postCache.savePostToCache({
-  //     key: postObjectId,
-  //     currentUserId: `${req.currentUser!.userId}`,
-  //     uId: `${req.currentUser!.uId}`,
-  //     createdPost
-  //   });
-  //   postQueue.addPostJob('addPostToDB', { key: req.currentUser!.userId, value: createdPost });
-  //   imageQueue.addImageJob('addImageToDB', {
-  //     key: `${req.currentUser!.userId}`,
-  //     imgId: result.public_id,
-  //     imgVersion: result.version.toString()
-  //   });
-  //   res.status(HTTP_STATUS.CREATED).json({ message: 'Post created with image successfully' });
-  // }
+    const postObjectId: ObjectId = new ObjectId();
+    const createdPost: IPostDocument = {
+      _id: postObjectId,
+      userId: req.currentUser!.userId,
+      username: req.currentUser!.username,
+      email: req.currentUser!.email,
+      avatarColor: req.currentUser!.avatarColor,
+      profilePicture,
+      post,
+      bgColor,
+      feelings,
+      privacy,
+      gifUrl,
+      commentsCount: 0,
+      imgVersion: result.version.toString(),
+      imgId: result.public_id,
+      videoId: '',
+      videoVersion: '',
+      createdAt: new Date(),
+      reactions: { like: 0, love: 0, happy: 0, sad: 0, wow: 0, angry: 0 }
+    } as IPostDocument;
+    socketIOPostObject.emit('add post', createdPost);
+    await postCache.savePostToCache({
+      key: postObjectId,
+      currentUserId: `${req.currentUser!.userId}`,
+      uId: `${req.currentUser!.uId}`,
+      createdPost
+    });
+    postQueue.addPostJob('addPostToDB', { key: req.currentUser!.userId, value: createdPost });
+    // call image queue to add image to mongodb database
+    // imageQueue.addImageJob('addImageToDB', {
+    //   key: `${req.currentUser!.userId}`,
+    //   imgId: result.public_id,
+    //   imgVersion: result.version.toString()
+    // });
+    res.status(HTTP_STATUS.CREATED).json({ message: 'Post created with image successfully' });
+  }
 
   // @joiValidation(postWithVideoSchema)
   // public async postWithVideo(req: Request, res: Response): Promise<void> {

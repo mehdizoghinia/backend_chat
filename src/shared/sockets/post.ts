@@ -1,4 +1,4 @@
-import { ICommentDocument } from '@comment/interfaces/comment.interface';
+// import { ICommentDocument } from '@comment/interfaces/comment.interface';
 import { IReactionDocument } from '@reaction/interfaces/reaction.interface';
 import { Server, Socket } from 'socket.io';
 
@@ -18,9 +18,9 @@ export class SocketIOPostHandler {
         this.io.emit('update like', reaction);
       });
 
-      socket.on('comment', (data: ICommentDocument) => {
-        this.io.emit('update comment', data);
-      });
+      // socket.on('comment', (data: ICommentDocument) => {
+      //   this.io.emit('update comment', data);
+      // });
     });
   }
 }
